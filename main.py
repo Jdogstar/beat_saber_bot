@@ -1,10 +1,9 @@
 """Runs and holds the bot."""
 
 import os
-import datetime
+from datetime import datetime
 import re
 from urllib.request import urlopen, Request
-import sys
 from asyncio.proactor_events import _ProactorBasePipeTransport
 import platform
 from functools import wraps
@@ -61,8 +60,10 @@ class MyClient(discord.Client):
                         break
                 # Checks if the last message from the bot was on the same day.
                 # If so, do not resend status, else resend status
-                last_message = await channel.history(limit=1).flatten()
-                if last_message[0].created_at == datetime.date:
+                last_message_lst = await channel.history(limit=1).flatten()
+                last_msg = last_message_lst[0].created_at.strftime('%Y-%m-%d')
+                current_date = datetime.today().strftime('%Y-%m-%d')
+                if last_msg != current_date:
                     await self.get_status_bmfb()
                 else:
                     print('Logged in as')
@@ -120,4 +121,3 @@ if platform.system() == 'Windows':
     # Silence the exception here.
     _ProactorBasePipeTransport.__del__ = silence(
         _ProactorBasePipeTransport.__del__)
-sys.exit()
